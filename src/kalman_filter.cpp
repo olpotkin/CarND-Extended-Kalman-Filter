@@ -55,11 +55,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     float vy = x_(3);
     
     // Check the division by 0.
-    if (fabs(px) < 0.000001 && fabs(py) < 0.000001) {
+    float eps = 0.000001
+    if (fabs(px) < eps && fabs(py) < eps) {
         px = eps;
         py = eps;
     }
-    else if (fabs(px) < 0.000001) {
+    else if (fabs(px) < eps) {
         px = eps;
     }
     
