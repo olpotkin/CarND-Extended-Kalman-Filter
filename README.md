@@ -1,7 +1,9 @@
 # Extended Kalman Filter
 
-[image1]: ./imgs/dataset_1.png "dataset_1.png"
-[image2]: ./imgs/dataset_2.png "dataset_2.png"
+[image1]: ./imgs/dataset_1.png "dataset_1"
+[image2]: ./imgs/dataset_2.png "dataset_2"
+[image3]: ./imgs/general_flow.png "Sensor Fusion General Processing Flow"
+
 
 In this project utilize a kalman filter to estimate the state of a moving object of interest with noisy lidar and radar measurements. 
 
@@ -18,6 +20,10 @@ Once the install for uWebSocketIO is complete, the main program can be built and
 5. ./ExtendedKF
 
 Note that the programs that need to be written to accomplish the project are src/FusionEKF.cpp, src/FusionEKF.h, kalman_filter.cpp, kalman_fitler.h, tools.cpp, and tools.h
+
+### Sensor Fusion General Processing Flow
+
+![alt text][image3]
 
 Here is the main protcol that main.cpp uses for uWebSocketIO in communicating with the simulator.
 
