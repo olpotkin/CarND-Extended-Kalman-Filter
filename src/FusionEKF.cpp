@@ -89,8 +89,14 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
             
             double px = rho * cos(phi);
             double py = rho * sin(phi);
-            double vx = rho_dot * sin(phi);
-            double vy = rho_dot * cos(phi);
+            // So while we can perfectly calculate px and py from phi,
+            // we cannot compute vx and vy from phi.
+            // We will need yaw (which is introduced in UKF) to compute vx and vy.
+            // So even from radar measurement, we can only compute px and py.
+            // double vx = rho_dot * sin(phi);
+            // double vy = rho_dot * cos(phi);
+            double vx = 0;
+            double vy = 0;
 
             ekf_.x_ << px, py, vx, vy;
         }
@@ -152,8 +158,13 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
                 0, dt3/2*noise_ay, 0, dt2*noise_ay;
     
     cout << "ekf_.Predict()..." << endl;
-    
-    ekf_.Predict();
+
+    // Check if dt is above a certain threshold before predicting.
+    // EKF prediction step does not handle dt=0 case gracefully!
+    if (dt >= 0.000001) {
+        ekf_.Predict();
+    }
+
 
     cout << "ekf_.Predict() done!" << endl;
 
@@ -162,7 +173,6 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ****************************************************************************/
 
     /**
-    TODO:
      * Use the sensor type to perform the update step.
      * Update the state and covariance matrices.
     */
