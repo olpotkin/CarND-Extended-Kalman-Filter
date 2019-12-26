@@ -12,11 +12,11 @@ This repository includes two files that can be used to set up and intall [uWebSo
 
 Once the install for uWebSocketIO is complete, the main program can be built and ran by doing the following from the project top directory.
 
-1. mkdir build
-2. cd build
-3. cmake ..
-4. make
-5. ./ExtendedKF
+1. ```mkdir build```
+2. ```cd build```
+3. ```cmake ..```
+4. ```make```
+5. ```./ExtendedKF```
 
 Note that the programs that need to be written to accomplish the project are src/FusionEKF.cpp, src/FusionEKF.h, kalman_filter.cpp, kalman_fitler.h, tools.cpp, and tools.h
 
