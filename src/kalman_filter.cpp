@@ -1,15 +1,22 @@
 #include "kalman_filter.h"
 
+
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+
 
 KalmanFilter::KalmanFilter() {}
 
 KalmanFilter::~KalmanFilter() {}
 
-
-void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
-                        MatrixXd &H_in, MatrixXd &R_in, MatrixXd &Q_in) {
+void KalmanFilter::Init(
+  VectorXd& x_in,
+  MatrixXd& P_in,
+  MatrixXd& F_in,
+  MatrixXd& H_in,
+  MatrixXd& R_in,
+  MatrixXd& Q_in)
+{
   x_ = x_in;
   P_ = P_in;
   F_ = F_in;
@@ -18,11 +25,11 @@ void KalmanFilter::Init(VectorXd &x_in, MatrixXd &P_in, MatrixXd &F_in,
   Q_ = Q_in;
 }
 
-
 // Predict the state
 void KalmanFilter::Predict() {
   // There is no external motion, so, we do not have to add "+u"
   x_ = F_ * x_;
+
   MatrixXd Ft = F_.transpose();
   P_ = F_ * P_ * Ft + Q_;
 }
@@ -40,6 +47,7 @@ void KalmanFilter::Update(const VectorXd& z) {
   // New state
   int x_size = x_.size();
   x_ = x_ + (K * y);
+  
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 }
