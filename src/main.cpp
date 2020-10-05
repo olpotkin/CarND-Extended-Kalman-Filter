@@ -6,9 +6,8 @@
 #include "tools.h"
 
 using namespace std;
+using json = nlohmann::json;  // For convenience
 
-// For convenience
-using json = nlohmann::json;
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -41,7 +40,7 @@ int main()
 
   h.onMessage([&fusionEKF, &tools, &estimations, &ground_truth](
     uWS::WebSocket<uWS::SERVER> ws,
-    char *data,
+    char*  data,
     size_t length,
     uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
