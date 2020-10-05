@@ -3,6 +3,7 @@
 #include "Eigen/Dense"
 #include <iostream>
 
+
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -61,7 +62,7 @@ FusionEKF::~FusionEKF() {}
 void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
   cout << "Initialization..." << endl;
 
-  ///  Initialization
+  /// Initialization:
   /// Initialize the state ekf_.x_ with the first measurement.
   /// Create the covariance matrix.
   /// Remember: you'll need to convert radar from polar to cartesian coordinates.
@@ -75,8 +76,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       cout << "Radar - step 1" << endl;
       // Convert radar from polar to cartesian coordinates and initialize state.
-      double rho = measurement_pack.raw_measurements_[0];
-      double phi = measurement_pack.raw_measurements_[1];
+      double rho     = measurement_pack.raw_measurements_[0];
+      double phi     = measurement_pack.raw_measurements_[1];
       double rho_dot = measurement_pack.raw_measurements_[2];
 
       double px = rho * cos(phi);
@@ -94,6 +95,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
       cout << "Lidar - step 1" << endl;
+
       // Initialize state.
       ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
@@ -154,18 +156,20 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
 
   cout << "ekf_.Predict() done!" << endl;
 
-    /// Update
-    /// Use the sensor type to perform the update step.
-    /// Update the state and covariance matrices.
+  /// Update:
+  /// Use the sensor type to perform the update step.
+  /// Update the state and covariance matrices.
 
   VectorXd x_new = measurement_pack.raw_measurements_;
+
   if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
     // Radar updates
     if ((x_new(0) != 0) || (x_new(1) != 0)) {
-      Hj_ = tools.CalculateJacobian(ekf_.x_);
+      Hj_     = tools.CalculateJacobian(ekf_.x_);
       ekf_.H_ = Hj_;
       ekf_.R_ = R_radar_;
       ekf_.UpdateEKF(x_new);
+
       cout << "Update RADAR done!" << endl;
     }
   }
@@ -174,6 +178,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
     ekf_.R_ = R_laser_;
     ekf_.H_ = H_laser_;
     ekf_.Update(x_new);
+    
     cout << "Update LIDAR done!" << endl;
   }
 
