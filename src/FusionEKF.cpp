@@ -4,10 +4,8 @@
 #include <iostream>
 
 
-using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
-using std::vector;
 
 
 // Constructor
@@ -60,7 +58,7 @@ FusionEKF::~FusionEKF() {}
 
 
 void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
-  cout << "Initialization..." << endl;
+  std::cout << "Initialization..." << std::endl;
 
   /// Initialization:
   /// Initialize the state ekf_.x_ with the first measurement.
@@ -69,12 +67,12 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
 
   if (!is_initialized_) {
     // First measurement
-    cout << "EKF: " << endl;
+    std::cout << "EKF: " << std::endl;
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
-      cout << "Radar - step 1" << endl;
+      std::cout << "Radar - step 1" << std::endl;
       // Convert radar from polar to cartesian coordinates and initialize state.
       double rho     = measurement_pack.raw_measurements_[0];
       double phi     = measurement_pack.raw_measurements_[1];
@@ -94,29 +92,30 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
       ekf_.x_ << px, py, vx, vy;
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
-      cout << "Lidar - step 1" << endl;
+      std::cout << "Lidar - step 1" << std::endl;
 
       // Initialize state.
       ekf_.x_ << measurement_pack.raw_measurements_[0], measurement_pack.raw_measurements_[1], 0, 0;
     }
 
     // Special case initialisation problem (track 2)
-    float eps = 0.000001F;
-    if (fabs(ekf_.x_(0)) < eps && fabs(ekf_.x_(1)) < eps) {
+    double eps = 0.000001F;
+    if (std::fabs(ekf_.x_(0)) < eps && std::fabs(ekf_.x_(1)) < eps) {
       ekf_.x_(0) = eps;
       ekf_.x_(1) = eps;
     }
 
     // Print the initialization results
-    cout << "EKF init: " << ekf_.x_ << endl;
+    std::cout << "EKF init: " << ekf_.x_ << std::endl;
 
     // Done initializing, no need to predict or update
     previous_timestamp_ = measurement_pack.timestamp_;
     is_initialized_ = true;
+
     return;
   }
 
-  cout << "Prediction..." << endl;
+  std::cout << "Prediction..." << std::endl;
 
   /// Prediction
   /// TODO:
@@ -127,7 +126,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
 
   // Compute the time elapsed between the current and previous measurements
   // dt - expressed in seconds
-  float dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0F;
+  double dt = (measurement_pack.timestamp_ - previous_timestamp_) / 1000000.0F;
   previous_timestamp_ = measurement_pack.timestamp_;
 
   ekf_.F_ = MatrixXd(4, 4);
@@ -136,9 +135,9 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
               0, 0, 1,  0,
               0, 0, 0,  1;
 
-  float dt2 = pow(dt, 2);
-  float dt3 = pow(dt, 3);
-  float dt4 = pow(dt, 4);
+  double dt2 = pow(dt, 2);
+  double dt3 = pow(dt, 3);
+  double dt4 = pow(dt, 4);
 
   ekf_.Q_ = MatrixXd(4, 4);
   ekf_.Q_ <<  dt4/4*noise_ax, 0,              dt3/2*noise_ax, 0,
@@ -146,7 +145,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
               dt3/2*noise_ax, 0,              dt2*noise_ax,   0,
               0,              dt3/2*noise_ay, 0,              dt2*noise_ay;
 
-  cout << "ekf_.Predict()..." << endl;
+  std::cout << "ekf_.Predict()..." << std::endl;
 
   // Check if dt is above a certain threshold before predicting.
   // EKF prediction step does not handle dt=0 case gracefully!
@@ -154,7 +153,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
     ekf_.Predict();
   }
 
-  cout << "ekf_.Predict() done!" << endl;
+  std::cout << "ekf_.Predict() done!" << std::endl;
 
   /// Update:
   /// Use the sensor type to perform the update step.
@@ -170,7 +169,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
       ekf_.R_ = R_radar_;
       ekf_.UpdateEKF(x_new);
 
-      cout << "Update RADAR done!" << endl;
+      std::cout << "Update RADAR done!" << std::endl;
     }
   }
   else {
@@ -179,10 +178,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage& measurement_pack) {
     ekf_.H_ = H_laser_;
     ekf_.Update(x_new);
     
-    cout << "Update LIDAR done!" << endl;
+    std::cout << "Update LIDAR done!" << std::endl;
   }
 
   // Print the output
-  cout << "x_ = " << ekf_.x_ << endl;
-  cout << "P_ = " << ekf_.P_ << endl;
+  std::cout << "x_ = " << ekf_.x_ << std::endl;
+  std::cout << "P_ = " << ekf_.P_ << std::endl;
 }
